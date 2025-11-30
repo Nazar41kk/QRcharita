@@ -1,65 +1,37 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <title>QR hra</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 0; 
-            height: 100vh;
-            display: flex; 
-            flex-direction: column;
-            background: black;
-        }
+<meta charset="UTF-8">
+<title>QR hra</title>
+<style>
+body { 
+    font-family: Arial, sans-serif; 
+    margin: 0; 
+    height: 100vh;
+    display: flex; 
+    flex-direction: column;
+    background: black;
+    overflow: hidden;
+}
 
-        .top-bar {
-            height: 13%; 
-            background-color: #333333; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+.top-bar { height: 13%; background-color: #333; display: flex; justify-content: center; align-items: center; }
+.top-bar img { max-height: 80%; }
 
-        .top-bar img {
-            max-height: 80%; 
-        }
+h1 { font-size: 100px; margin: 50px 0; text-align: center; color: rgb(177,100,166); }
+.counter { font-size: 200px; font-weight: bold; color: rgb(177,100,166); text-align: center; padding: 20px 40px; border: 15px solid rgb(125,63,131); border-radius: 60px; margin: 0 auto; }
 
-        h1 {
-            font-size: 100px;
-            margin: 50px 0 50px 0;
-            text-align: center;
-            color: rgb(177, 100, 166);
-        }
+.finish-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(100,100,100,0.7); display:flex; justify-content:center; align-items:center; z-index:100; flex-direction:column; }
+.finish-message { font-size: 80px; font-weight: bold; color: rgb(177,100,166); text-align:center; padding:40px 60px; border:15px solid rgb(125,63,131); border-radius:60px; background:black; z-index:101; }
 
-        .counter {
-            font-size: 200px;
-            font-weight: bold;
-            color: rgb(177, 100, 166);
-            text-align: center;
-            padding: 20px 40px;
-            border: 15px solid rgb(125, 63, 131);
-            border-radius: 60px;
-            margin: 0 auto;
-        }
+.confetti { position: fixed; width: 12px; height: 12px; background-color: rgb(177,100,166); top:-20px; animation: fall linear infinite; opacity:0.9; border-radius:3px; }
+@keyframes fall { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(120vh) rotate(720deg); } }
 
-        .content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
+a.reset { position:absolute; bottom:20px; right:20px; color:#ccc; font-size:14px; z-index:200; cursor:pointer; }
+.content { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+</style>
 </head>
 <body>
-    
 
-    <a onclick="localStorage.clear(); location.reload();" 
-    style="position: absolute; bottom: 20px; right: 20px; color: #444;">
-    reset
- </a>
- 
 <div class="top-bar">
     <img src="{{ url_for('static', filename='sitlogo.png') }}" alt="Logo">
 </div>
@@ -69,24 +41,65 @@
     <div class="counter" id="counter">0/5</div>
 </div>
 
+<div class="finish-overlay" id="finishOverlay">
+    <div class="finish-message">🎉 Gratulujeme!<br>Našli jste všech 5 QR kódů!</div>
+    <a class="reset" onclick="resetProgress();">reset</a>
+</div>
+
+<a class="reset" onclick="resetProgress();">reset</a>
+
 <script>
-    function updateCounter() {
-        let completed = 0;
-
-        for (let i = 1; i <= 5; i++) {
-            if (localStorage.getItem("checkpoint_" + i) === "done") {
-                completed++;
-            }
-        }
-
-        document.getElementById("counter").textContent = completed + "/5";
-
-        if (completed === 5) {
-            alert("🎉 Gratulujeme! Našli jste všechny QR kódy!");
+function updateCounter() {
+    let completed = 0;
+    for (let i = 1; i <= 5; i++) {
+        if (localStorage.getItem("checkpoint_" + i) === "done") {
+            completed++;
         }
     }
+    document.getElementById("counter").textContent = completed + "/5";
 
+    const overlay = document.getElementById("finishOverlay");
+    if (completed === 5) {
+        overlay.style.display = "flex";
+        createConfetti();
+    } else {
+        overlay.style.display = "none";
+    }
+}
+
+function createConfetti() {
+    for (let i = 0; i < 60; i++) {
+        const c = document.createElement("div");
+        c.classList.add("confetti");
+        c.style.left = Math.random() * 100 + "vw";
+        c.style.animationDuration = 3 + Math.random() * 3 + "s";
+        c.style.opacity = 0.6 + Math.random() * 0.4;
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 6000);
+    }
+}
+
+function resetProgress() {
+    localStorage.clear();
     updateCounter();
+}
+
+
+function handleQRCodeFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const qrId = parseInt(params.get('id'), 10);
+    if (qrId >= 1 && qrId <= 5) {
+        localStorage.setItem('checkpoint_' + qrId, 'done');
+
+        window.location.href = '/';
+    }
+}
+
+
+window.onload = updateCounter;
+
+
+handleQRCodeFromURL();
 </script>
 
 </body>
