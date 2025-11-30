@@ -6,17 +6,17 @@
 </head>
 <body>
 
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-
-    if (id >= 1 && id <= 4) {
-        localStorage.setItem("checkpoint_" + id, "done");
-    }
-
-    // после сохранения прогресса редирект на главную
-    window.location.href = "/";
-</script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+    
+        if (id >= 1 && id <= 5) {
+            localStorage.setItem("checkpoint_" + id, "done");
+        }
+    
+        // редирект на главную, прогресс уже сохранён
+        window.location.href = "/";
+    </script>
 
 <p>Načítám...</p>
 
