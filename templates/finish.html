@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Dokončeno!</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .message {
+            font-size: 80px;
+            font-weight: bold;
+            color: rgb(177, 100, 166);
+            text-align: center;
+            padding: 40px 60px;
+            border: 15px solid rgb(125, 63, 131);
+            border-radius: 60px;
+            z-index: 10;
+        }
+
+        /* Конфетти */
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background-color: rgb(177, 100, 166);
+            top: -20px;
+            animation: fall linear infinite;
+            opacity: 0.9;
+            border-radius: 3px;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(120vh) rotate(720deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="message">
+    🎉 Gratulujeme!<br>
+    Našli jste všech 5 QR kódů!
+</div>
+
+<script>
+    // Записываем, что игра окончена
+    localStorage.setItem("checkpoint_5", "done");
+
+    // Блокируем любые действия на странице
+    document.body.style.pointerEvents = "none";
+
+    // Конфетти
+    function createConfetti() {
+        for (let i = 0; i < 60; i++) {
+            const c = document.createElement("div");
+            c.classList.add("confetti");
+
+            c.style.left = Math.random() * 100 + "vw";
+            c.style.animationDuration = 3 + Math.random() * 3 + "s";
+            c.style.opacity = 0.6 + Math.random() * 0.4;
+
+            document.body.appendChild(c);
+
+            // Удаляем для чистоты
+            setTimeout(() => c.remove(), 6000);
+        }
+    }
+
+    createConfetti();
+</script>
+
+</body>
+</html>

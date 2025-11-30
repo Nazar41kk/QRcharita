@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>QR hra</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            height: 100vh;
+            display: flex; 
+            flex-direction: column;
+            background: black;
+        }
+
+        .top-bar {
+            height: 13%; 
+            background-color: #333333; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .top-bar img {
+            max-height: 80%; 
+        }
+
+        h1 {
+            font-size: 100px;
+            margin: 50px 0 50px 0;
+            text-align: center;
+            color: rgb(177, 100, 166);
+        }
+
+        .counter {
+            font-size: 200px;
+            font-weight: bold;
+            color: rgb(177, 100, 166);
+            text-align: center;
+            padding: 20px 40px;
+            border: 15px solid rgb(125, 63, 131);
+            border-radius: 60px;
+            margin: 0 auto;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    
+
+    <a onclick="localStorage.clear(); location.reload();" 
+    style="position: absolute; bottom: 20px; right: 20px; color: #444;">
+    reset
+ </a>
+ 
+<div class="top-bar">
+    <img src="{{ url_for('static', filename='sitlogo.png') }}" alt="Logo">
+</div>
+
+<div class="content">
+    <h1>Načteno QR kódů</h1>
+    <div class="counter" id="counter">0/5</div>
+</div>
+
+<script>
+    function updateCounter() {
+        let completed = 0;
+
+        for (let i = 1; i <= 5; i++) {
+            if (localStorage.getItem("checkpoint_" + i) === "done") {
+                completed++;
+            }
+        }
+
+        document.getElementById("counter").textContent = completed + "/5";
+
+        if (completed === 5) {
+            alert("🎉 Gratulujeme! Našli jste všechny QR kódy!");
+        }
+    }
+
+    updateCounter();
+</script>
+
+</body>
+</html>
