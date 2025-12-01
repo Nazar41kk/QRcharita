@@ -37,12 +37,12 @@ a.reset { position:absolute; bottom:20px; right:20px; color:#ccc; font-size:14px
 </div>
 
 <div class="content">
-    <h1>Načteno QR kódů</h1>
+    <h1>Počet ulovených SPOTů</h1>
     <div class="counter" id="counter">0/5</div>
 </div>
 
 <div class="finish-overlay" id="finishOverlay">
-    <div class="finish-message">🎉 Gratulujeme!<br>Našli jste všech 5 QR kódů!</div>
+    <div class="finish-message">🎉 Gratulujeme!<br>Ulovili jste všechny vánoční SPOTy. Odměna na vás čeká před TechTowerem.</div>
     <a class="reset" onclick="resetProgress();">reset</a>
 </div>
 
@@ -84,21 +84,21 @@ function resetProgress() {
     updateCounter();
 }
 
-
+// --- ОБРАБОТКА URL ?id=N ---
 function handleQRCodeFromURL() {
     const params = new URLSearchParams(window.location.search);
     const qrId = parseInt(params.get('id'), 10);
     if (qrId >= 1 && qrId <= 5) {
         localStorage.setItem('checkpoint_' + qrId, 'done');
-
+        // после сохранения редиректим на /
         window.location.href = '/';
     }
 }
 
-
+// Запускаем проверку при загрузке
 window.onload = updateCounter;
 
-
+// Если есть ?id=N, обрабатываем его
 handleQRCodeFromURL();
 </script>
 
